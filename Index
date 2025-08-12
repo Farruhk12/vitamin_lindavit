@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Витаминный гид</title>
+<style>
+  :root{
+    --bg:#f7f8fb; --card:#ffffff; --text:#1f2a37; --muted:#6b7280; --accent:#DB3C21;
+    --accent-2:#ff715a; --ring:rgba(219,60,33,.18); --ok:#16a34a; --border:#e5e7eb;
+    --chip:#eef2ff; --chip-text:#3730a3; --shadow:0 12px 30px rgba(15,23,42,.08);
+    --radius:16px; --radius-lg:22px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--text); background:var(--bg)}
+  .wrap{max-width:1100px; margin:24px auto 80px; padding:0 16px}
+  header{position:sticky; top:0; z-index:10; backdrop-filter:saturate(120%) blur(6px); background:rgba(247,248,251,.8); border-bottom:1px solid var(--border)}
+  .bar{max-width:1100px; margin:0 auto; padding:10px 16px; display:flex; gap:12px; align-items:center}
+  .logo{display:flex; gap:10px; align-items:center; font-weight:700}
+  .logo .dot{width:10px; height:10px; border-radius:999px; background:var(--accent)}
+  h1{font-size:28px; margin:22px 0 10px}
+  p.lead{color:var(--muted); margin:0 0 18px}
+  /* Panel */
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg); box-shadow:var(--shadow); padding:16px}
+  .grid{display:grid; gap:12px}
+  @media(min-width:768px){ .grid-cols-3{grid-template-columns:repeat(3, 1fr)} }
+  @media(min-width:768px){ .grid-cols-2{grid-template-columns:repeat(2, 1fr)} }
+  label{font-size:13px; color:#334155; display:block; margin-bottom:6px}
+  select, input[type="number"]{width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff; color:var(--text); outline:none}
+  select:focus, input[type="number"]:focus{border-color:var(--accent); box-shadow:0 0 0 6px var(--ring)}
+  .row{display:grid; gap:12px}
+  @media(min-width:768px){ .row{grid-template-columns:1fr 1fr 1fr 1fr} }
+  .switch{display:flex; align-items:center; gap:10px}
+  .switch input{appearance:none; width:42px; height:26px; background:#e5e7eb; border-radius:20px; position:relative; outline:none; transition:all .2s ease}
+  .switch input:checked{background:var(--accent)}
+  .switch input:before{content:""; position:absolute; width:22px; height:22px; top:2px; left:2px; background:#fff; border-radius:999px; transition:all .2s ease}
+  .switch input:checked:before{left:18px}
+  .hint{font-size:12px; color:var(--muted)}
+  .divider{height:1px; background:var(--border); margin:18px 0}
+  .chips{display:flex; gap:8px; flex-wrap:wrap}
+  .chip{background:var(--chip); color:var(--chip-text); padding:6px 10px; border-radius:999px; font-size:12px}
+  .title{font-weight:700; margin:6px 0 8px}
+  .section{margin-top:20px}
+  /* Vitamin card */
+  .vit-card{display:grid; gap:14px; grid-template-columns:1fr; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px}
+  @media(min-width:900px){ .vit-card{grid-template-columns:2fr 3fr} }
+  .vit-card h3{margin:0 0 6px}
+  .pill{display:inline-flex; align-items:center; gap:8px; font-size:12px; padding:6px 10px; border-radius:999px; background:#f1f5f9; color:#0f172a}
+  .badge{display:inline-flex; align-items:center; gap:6px; font-size:12px; background:#fef2f2; color:#991b1b; padding:6px 10px; border-radius:10px}
+  ul.clean{margin:8px 0 0 18px; padding:0}
+  /* Product cards */
+  .cards{display:grid; gap:12px}
+  @media(min-width:768px){ .cards{grid-template-columns:repeat(2,1fr)} }
+  @media(min-width:1100px){ .cards{grid-template-columns:repeat(3,1fr)} }
+  .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px; display:flex; flex-direction:column}
+  .card img{width:100%; height:180px; object-fit:contain; background:#fff; border:1px solid var(--border); border-radius:12px}
+  .card h4{margin:10px 0 6px; font-size:16px}
+  .meta{font-size:12px; color:var(--muted)}
+  .kv{font-size:13px; margin-top:8px}
+  .kv b{color:#111827}
+  .links{margin-top:auto; display:flex; gap:8px; flex-wrap:wrap}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); text-decoration:none; font-weight:600}
+  .btn.accent{background:var(--accent); color:white; border-color:var(--accent)}
+  .footer-note{margin-top:8px; font-size:12px; color:var(--muted)}
+  .empty{padding:18px; background:#fff; border:1px dashed var(--border); border-radius:12px; color:var(--muted)}
+</style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="logo"><span class="dot"></span>Витаминный гид</div>
+      <div style="margin-left:auto; font-size:13px; color:var(--muted)">современный светлый дизайн • Lindavit ©</div>
+    </div>
+  </header>
+  <div class="wrap">
+    <h1>Подбор и справочник по витаминам и минералам</h1>
+    <p class="lead">Выберите возраст и пол, затем витамин/минерал — получите краткую справку: зачем нужен, в каких продуктах есть, когда принимать и с чем сочетать. Внизу — рекомендации по продуктам Lindavit с указанием дозировок выбранного нутриента.</p>
+
+    <div class="panel">
+      <div class="grid grid-cols-3">
+        <div>
+          <label>Возраст</label>
+          <input id="age" type="number" min="0" max="120" value="30" />
+          <div class="hint">Если &lt;18 — блок «Беременность/Лактация» скрыт.</div>
+        </div>
+        <div>
+          <label>Пол</label>
+          <select id="sex">
+            <option value="male">Мужской</option>
+            <option value="female">Женский</option>
+          </select>
+        </div>
+        <div id="pregWrap">
+          <label>Женщина: состояние</label>
+          <div class="row" style="grid-template-columns:1fr 1fr;">
+            <label class="switch"><input id="preg" type="checkbox"><span>Беременность</span></label>
+            <label class="switch"><input id="lact" type="checkbox"><span>Лактация</span></label>
+          </div>
+          <div class="hint">Показывается только для женщин ≥ 18 лет.</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="grid grid-cols-2">
+        <div>
+          <label>Витамин / минерал</label>
+          <select id="vitSelect"></select>
+        </div>
+        <div>
+          <label>Цель (не обязательно)</label>
+          <select id="goal">
+            <option value="">— не выбрано —</option>
+            <option value="immunity">Иммунитет</option>
+            <option value="bones">Кости/зубы</option>
+            <option value="skin">Кожа/волосы/ногти</option>
+            <option value="blood">Кроветворение</option>
+            <option value="vision">Зрение</option>
+            <option value="energy">Энергия/усталость</option>
+            <option value="heart">Сердце/сосуды</option>
+            <option value="pregnancy">Беременность</option>
+            <option value="weight">Контроль веса</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="vitInfo" class="section"></div>
+
+    <div class="section">
+      <h2 style="margin:8px 0 12px">Рекомендации Lindavit по выбранному нутриенту</h2>
+      <div id="products" class="cards"></div>
+      <div id="noProducts" class="empty" style="display:none">Нет подходящих продуктов под выбранный витамин/минерал.</div>
+      <div class="footer-note">* Дозировки приведены из описания продуктов; учитывайте индивидуальные показания и ограничения. Перед применением прочтите инструкцию.</div>
+    </div>
+  </div>
+
+<script>
+// --- База знаний по нутриентам: краткая функция, источники, время приема, совместимость ---
+const NUTRIENTS = {
+  "Витамин C": {
+    key:"vitc", role:"Антиоксидант, синтез коллагена, поддержка иммунитета и всасывания железа.",
+    foods:["цитрусовые","киви","шиповник","болгарский перец","брокколи"],
+    when:"Утром/днём с пищей. Избегать позднего вечера у чувствительных (бодрит).",
+    canWith:["Железо","Цинк","Витамин E"],
+    avoidWith:["Антациды сразу перед приёмом"], goals:["immunity","skin","energy"]
+  },
+  "Витамин D3": {
+    key:"d3", role:"Кальций-фосфорный обмен, иммунитет, мышцы, кости.",
+    foods:["жирная рыба","яйца","печень трески","грибы (ультрафиолет)"],
+    when:"С жирной пищей (лучше — основной приём).",
+    canWith:["Кальций","Витамин K2","Магний"],
+    avoidWith:["Высокие дозы одновременно с витамином A без показаний"], goals:["bones","immunity"]
+  },
+  "Витамин K2": {
+    key:"k2", role:"Направляет кальций в кости, снижает кальцификацию сосудов.",
+    foods:["натто","сыры","яичные желтки"],
+    when:"С едой, содержащей жир.", canWith:["Витамин D3","Кальций"], avoidWith:[], goals:["bones","heart"]
+  },
+  "Витамин E": {
+    key:"e", role:"Антиоксидант, защита клеточных мембран, кожа/репродуктивное здоровье.",
+    foods:["растительные масла","миндаль","семечки","авокадо"],
+    when:"С жирной пищей.", canWith:["Витамин C","Селен","Коэнзим Q10"], avoidWith:["Антикоагулянты — по назначению врача"], goals:["skin","heart"]
+  },
+  "Витамин A": {
+    key:"a", role:"Зрение, иммунитет, кожа/слизистые.", foods:["печень","яйца","морковь","тыква"],
+    when:"С едой, содержащей жир.", canWith:["Цинк","E"], avoidWith:["Высокие дозы вместе с D3 без показаний","Беременность — осторожно"], goals:["vision","skin"]
+  },
+  "Фолиевая кислота (B9)": {
+    key:"b9", role:"Кроветворение, деление клеток, нервная трубка плода.",
+    foods:["зелёные листовые","бобовые","цельные злаки"], when:"В любое время, можно с едой.",
+    canWith:["B12","Железо"], avoidWith:[], goals:["blood","pregnancy"]
+  },
+  "Витамин B12": {
+    key:"b12", role:"Нервная система, кроветворение, энергия.", foods:["мясо","рыба","яйца","молочные"],
+    when:"Утром/днём.", canWith:["B9","Железо"], avoidWith:[], goals:["energy","blood"]
+  },
+  "Витамин B-комплекс": {
+    key:"bcomplex", role:"Энергетический обмен, нервная система, кожа/волосы.",
+    foods:["цельные злаки","мясо","яйца","орехи"], when:"Утром/днём с едой.",
+    canWith:["Магний","Цинк"], avoidWith:[], goals:["energy","skin"]
+  },
+  "Кальций": {
+    key:"calcium", role:"Кости/зубы, нервно-мышечная проводимость.", foods:["молочные","творог","сыр","зелень","миндаль"],
+    when:"Вечером или дробно; избегать одновременного приёма с железом.",
+    canWith:["D3","K2"], avoidWith:["Железо (разнести на 2–3 часа)"], goals:["bones"]
+  },
+  "Железо": {
+    key:"iron", role:"Гемоглобин, перенос кислорода, энергия.", foods:["красное мясо","печень","бобовые","гречка"],
+    when:"Утром натощак или с витамином C; не вместе с кальцием/кофе/чаем.",
+    canWith:["Витамин C","B12","B9"], avoidWith:["Кальций","Кофе/чай","Антациды"], goals:["blood","energy"]
+  },
+  "Цинк": { key:"zinc", role:"Иммунитет, кожа, гормоны.", foods:["устрицы","говядина","тыквенные семечки"],
+    when:"Вечером или с едой при чувствительном желудке.", canWith:["Витамин C","B-комплекс"], avoidWith:["Железо/Кальций в один приём"], goals:["immunity","skin"] },
+  "Магний": { key:"mag", role:"Нервная система, мышцы, сон.", foods:["гречка","орехи","шпинат","какао"], when:"Вечером (расслабляет).", canWith:["B-комплекс","D3"], avoidWith:["Железо в один приём"], goals:["energy"] },
+  "Омега‑3": { key:"omega3", role:"Сердце/сосуды, мозг, противовоспалительное действие.", foods:["лосось","сардины","чия","льняное семя"], when:"С едой, содержащей жир.", canWith:["E","Q10"], avoidWith:[], goals:["heart","energy"] },
+  "Коэнзим Q10": { key:"q10", role:"Энергия митохондрий, сердце, антиоксидант.", foods:["печень","скумбрия","шпинат"], when:"С едой с жиром.", canWith:["E","Селен"], avoidWith:[], goals:["heart","energy"] },
+  "Лютеин/Зеаксантин": { key:"lutein", role:"Жёлтое пятно, защита сетчатки, зрительное утомление.", foods:["шпинат","кале","яичные желтки"], when:"С едой с жиром.", canWith:["Витамин E","Бета-каротин"], avoidWith:[], goals:["vision"] },
+  "Хром": { key:"chromium", role:"Углеводный обмен, контроль тяги к сладкому.", foods:["цельные злаки","брокколи","печень"], when:"Во время еды.", canWith:["B-комплекс"], avoidWith:[], goals:["weight","energy"] },
+  "Селен": { key:"selenium", role:"Антиоксидант, щитовидная железа, репродуктивная функция.", foods:["бразильские орехи","рыба","яйца"], when:"С едой.", canWith:["Витамин E","Q10"], avoidWith:[], goals:["immunity","heart"] }
+};
+
+// --- Каталог Lindavit (сокращенные ключевые дозировки для фильтрации по выбранному нутриенту) ---
+const PRODUCTS = [
+  { id:"d3_drops", name:"Линдавит D3 капли 15000 МЕ/мл (10 мл)", img:"https://i.ibb.co/8c72yzh/Lindavit-D3-drops.png", buy:"https://salomat.tj/main/product/1789", inst:"https://belinda.tj/files/products/instructions/linda-d3.pdf", nutrients:{"Витамин D3":"500 МЕ/капля"} },
+  { id:"kids", name:"Линдавит для Детей жев. тб №60", img:"https://i.ibb.co/XbH8Tj5/Lindavit-Kids-new-design.png", buy:"https://belinda.tj/files/products/instructions/lindavit-dlya-detey.pdf", inst:"https://belinda.tj/files/products/instructions/lindavit-dlya-detey.pdf", nutrients:{"Витамин A":"150 мкг","Витамин C":"20 мг","Витамин D3":"1.25 мкг","Витамин E":"1.642 мкг","Витамин K":"12.5 мкг","Цинк":"2.4 мг","Железо":"4 мг","Кальций":"68 мг","Магний":"15 мг","B-комплекс":"есть"} },
+  { id:"women", name:"Линдавит для Женщин тб №30", img:"https://i.ibb.co/qjfqH26/Lindavit-for-Women.png", buy:"https://salomat.tj/main/product/1790", inst:"https://belinda.tj/files/products/instructions/lindavit-dlya-zhenshchin.pdf", nutrients:{"Фолиевая кислота (B9)":"300 мкг","Витамин A":"2500 МЕ","Витамин E":"10 МЕ","Витамин D3":"400 МЕ","Витамин C":"50 мг","Йод":"200 мкг","Цинк":"5 мг","Селен":"40 мкг","Кальций":"1000 мг"} },
+  { id:"men", name:"Линдавит для Мужчин капс №30", img:"https://belinda.tj/files/products/img/lindavit-dlya-muzhchin.png", buy:"https://salomat.tj/main/product/1792", inst:"https://belinda.tj/files/products/instructions/lindavit-dlya-muzhchin.pdf", nutrients:{"Витамин A":"2500 МЕ","Витамин D3":"200 МЕ","B-комплекс":"есть","Витамин C":"50 мг","Витамин E":"10 мг","Железо":"20 мг","Цинк":"1 мг","Женьшень":"экстракт"} },
+  { id:"e400", name:"Линдавит E 400 МЕ софтгел №30", img:"https://i.ibb.co/X3NMyCV/Frame-4.png", buy:"https://salomat.tj/index.php/main/product/1791", inst:"https://belinda.tj/files/products/instructions/lindae.pdf", nutrients:{"Витамин E":"400 МЕ"} },
+  { id:"iron_caps", name:"Линдавит Железо капс №30", img:"https://belinda.tj/files/products/img/lindafer.png", buy:"https://salomat.tj/main/product/11251", inst:"https://belinda.tj/files/products/instructions/lindafer.pdf", nutrients:{"Железо":"100 мг","Фолиевая кислота (B9)":"0.75 мг","Витамин B12":"5 мкг","Витамин C":"75 мг","Цинк":"5 мг"} },
+  { id:"iron_syr", name:"Линдавит Железо сироп 150 мл", img:"https://belinda.tj/files/products/img/lindafer-sirop.png", buy:"https://salomat.tj/main/product/1800", inst:"https://belinda.tj/files/products/instructions/lindafer-sirop.pdf", nutrients:{"Железо":"41 мг/5 мл","Фолиевая кислота (B9)":"0.1 мг/5 мл","Витамин B12":"0.5 мкг/5 мл"} },
+  { id:"lact", name:"Линдавит Лактация капс №30", img:"https://ru.lindavit.com/wp-content/uploads/2018/03/Lindavit-Lactation-.png", buy:"https://salomat.tj/main/product/11111", inst:"https://belinda.tj/files/products/instructions/lindavit-laktaciya.pdf", nutrients:{"DHA/EPA":"100/140 мг","Кальций":"120 мг","Витамин C":"66 мг","Витамин E":"12 мг","Железо":"2.1 мг","Фолиевая кислота (B9)":"200 мкг","Витамин D3":"0.2 мг (1М МЕ)"} },
+  { id:"pregna", name:"Линдавит Прегна тб №30", img:"https://belinda.tj/files/products/img/lindavit-pregna.png", buy:"https://salomat.tj/main/product/1795", inst:"https://belinda.tj/files/products/instructions/lindavit-pregna.pdf", nutrients:{"Фолиевая кислота (B9)":"300 мкг","Витамин D3":"200 МЕ","Железо":"20 мг","Кальций":"250 мг","Йод":"150 мкг","Цинк":"25 мг"} },
+  { id:"prenatal", name:"Линдавит Пренатал капс №30", img:"https://i.ibb.co/WxV2qGd/Frame-4.png", buy:"https://salomat.tj/main/product/1795", inst:"https://belinda.tj/files/products/instructions/lindavit-prenatal.pdf", nutrients:{"Фолиевая кислота (B9)":"400 мкг","Железо":"7 мг","Цинк":"10 мг","Йод":"150 мкг","Витамин D3":"5 мкг","Витамин B12":"3 мкг"} },
+  { id:"syrup_multi", name:"Линдавит сироп 200 мл", img:"https://belinda.tj/files/products/img/lindavit-sirop.png", buy:"https://salomat.tj/main/product/1796", inst:"https://belinda.tj/files/products/instructions/lindavit-sirop.pdf", nutrients:{"Витамин A":"1200 МЕ/5 мл","Витамин D3":"100 МЕ/5 мл","Витамин C":"50 мг/5 мл","B-комплекс":"есть","Витамин E":"3 мг/5 мл"} },
+  { id:"slim", name:"Линдавит Слим тб 200 мкг №60", img:"https://belinda.tj/files/products/img/lindavit-slim.png", buy:"https://salomat.tj/main/product/1799", inst:"https://belinda.tj/files/products/instructions/lindavit-slim.pdf", nutrients:{"Хром":"200 мкг"} },
+  { id:"zinc_drops", name:"Линдавит Цинк капли 20 мг/мл (15 мл)", img:"https://i.ibb.co/MhZ3Nff/1.png", buy:"https://salomat.tj/main/product/1802", inst:"https://belinda.tj/files/products/instructions/lindavit-cink-kapli.pdf", nutrients:{"Цинк":"20 мг/мл"} },
+  { id:"vision", name:"Линдавит Вижн капс №30", img:"https://i.ibb.co/5FJj7JP/Lindavit-Vision.png", buy:"https://salomat.tj/main/product/11112", inst:"https://belinda.tj/files/products/instructions/lindavit-vizhn.pdf", nutrients:{"Лютеин":"6 мг","Зеаксантин":"1 мг","Астаксантин":"1 мг","Витамин E":"5 мг","β-каротин":"1.5 мг"} },
+  { id:"d3_60000", name:"Линдавит D3 капс 60000 МЕ №8", img:"https://lindavit.tj/wp-content/uploads/2021/03/Lindavit-D3.png", buy:"https://salomat.tj/main/product/11673", inst:"https://belinda.tj/files/products/instructions/lindavit-d3.pdf", nutrients:{"Витамин D3":"60000 МЕ/капс"} },
+  { id:"cal_eff", name:"Линдавит Кальций шип. тб №20", img:"https://belinda.tj/files/products/img/lindavit-kalciy.png", buy:"https://salomat.tj/main/product/1797", inst:"https://belinda.tj/files/products/instructions/lindavit-kalciy.pdf", nutrients:{"Кальций":"1000 мг","Витамин D3":"400 МЕ","Витамин C":"120 мг","Витамин K1":"60 мкг","Магний":"60 мг"} },
+  { id:"cardio", name:"Линдавит Кардио шип. тб №20", img:"https://belinda.tj/files/products/img/lindavit-kardio.png", buy:"https://salomat.tj/main/product/1793", inst:"https://belinda.tj/files/products/instructions/lindavit-kardio.pdf", nutrients:{"Коэнзим Q10":"10 мг","Калий":"300 мг","Магний":"100 мг","Витамин E":"10 мг","Витамин C":"50 мг","Цинк":"8 мг","Селен":"50 мкг","Витамин D":"5 мкг"} },
+  { id:"omega3", name:"Линдавит Омега‑3 софтгел №30", img:"https://lindavit.tj/wp-content/uploads/2017/08/Lindavit-omega-3-800x800-1.png", buy:"https://salomat.tj/main/product/1794", inst:"https://belinda.tj/files/products/instructions/lindavit-omega-3.pdf", nutrients:{"Омега‑3":"500 мг","Витамин B12":"15 мкг","Альфа‑липоевая кислота":"50 мг","Хром":"200 мкг","Селен":"75 мкг"} },
+  { id:"osteo", name:"Линдавит Остео (D3+K2) капли", img:"https://i.ibb.co/RP0hJYg/Lindavit-osteo.png", buy:"https://belinda.tj/product/lindavit-osteo", inst:"https://belinda.tj/product/lindavit-osteo", nutrients:{"Витамин D3":"200 МЕ/порция","Витамин K2":"4.5 мкг/порция"} },
+  { id:"plus", name:"Линдавит Plus тб №30", img:"https://i.ibb.co/rfMPXZ1/Lindavit-Plus-2.png", buy:"https://salomat.tj/main/product/1790", inst:"https://belinda.tj/files/products/instructions/lindavit-plus.pdf", nutrients:{"Витамин C":"60 мг","Витамин D3":"7.5 мкг","Витамин E":"25 мг","B-комплекс":"есть","Железо":"10 мг","Цинк":"15 мг","Йод":"150 мкг","Женьшень":"10 мг"} },
+  { id:"c1000", name:"Линдавит С шип. 1000 мг №20", img:"https://i.ibb.co/VQnnmTx/1.png", buy:"https://salomat.tj/main/product/11720", inst:"https://belinda.tj/files/products/instructions/lindavit-s.pdf", nutrients:{"Витамин C":"1000 мг"} },
+  { id:"c500", name:"Линдавит С шип. 500 мг №20", img:"https://i.ibb.co/VQnnmTx/1.png", buy:"https://salomat.tj/main/product/11720", inst:"https://belinda.tj/files/products/instructions/lindavit-s.pdf", nutrients:{"Витамин C":"500 мг"} },
+  { id:"selen_q10", name:"Линдавит Селен + Q10 тб №30", img:"https://i.ibb.co/bvCNNSF/Lindavit-Selenium.png", buy:"https://belinda.tj/product/lindavit-selen", inst:"https://belinda.tj/product/lindavit-selen", nutrients:{"Селен":"200 мкг","Коэнзим Q10":"60 мг"} },
+  { id:"ciron", name:"Линдавит Цирон (Fe+С) стики", img:"https://i.ibb.co/PYtQk37/Lindavit-Ciron.png", buy:"https://belinda.tj/product/lindavit-ciron", inst:"https://belinda.tj/product/lindavit-ciron", nutrients:{"Железо":"14 мг","Витамин C":"50 мг"} },
+  { id:"lindakalc_tab", name:"Линдакалц актив тб №30", img:"https://belinda.tj/files/products/img/lindakalc-aktiv.png", buy:"https://salomat.tj/main/product/1797", inst:"https://belinda.tj/files/products/instructions/lindakalc-aktiv.pdf", nutrients:{"Кальций":"500 мг","Витамин D3":"250 МЕ"} },
+  { id:"lindakalc_susp", name:"Линдакалц суспензия 150 мл", img:"https://lindavit.tj/wp-content/uploads/2021/03/Lindaсals-susp-800x800-1.png", buy:"https://salomat.tj/main/product/1798", inst:"https://belinda.tj/files/products/instructions/lindakalc.pdf", nutrients:{"Кальций":"250 мг/5 мл","Витамин D3":"125 МЕ/5 мл"} },
+  { id:"lindamishki", name:"ЛиндаМишки пастилки №60 (пробиотики + B)", img:"https://belinda.tj/files/products/img/lindamishki.png", buy:"https://belinda.tj/files/products/instructions/lindamishki.pdf", inst:"https://belinda.tj/files/products/instructions/lindamishki.pdf", nutrients:{"B-комплекс":"есть","Пробиотики":"L.rhamnosus/B.infantis"} },
+  { id:"lindacink_tab", name:"Линдацинк тб 20 мг №25", img:"https://belinda.tj/files/products/img/lindacink.png", buy:"https://salomat.tj/index.php/main/product/1801", inst:"https://belinda.tj/files/products/instructions/lindacink.pdf", nutrients:{"Цинк":"20 мг"} }
+];
+
+// Список нутриентов для выбора
+const VIT_KEYS = Object.keys(NUTRIENTS);
+
+// DOM refs
+const vitSelect = document.getElementById('vitSelect');
+VIT_KEYS.forEach(v => { const opt=document.createElement('option'); opt.value=v; opt.textContent=v; vitSelect.appendChild(opt); });
+vitSelect.value = 'Витамин C';
+
+const ageEl = document.getElementById('age');
+const sexEl = document.getElementById('sex');
+const pregWrap = document.getElementById('pregWrap');
+const pregEl = document.getElementById('preg');
+const lactEl = document.getElementById('lact');
+const goalEl = document.getElementById('goal');
+const vitInfo = document.getElementById('vitInfo');
+const productsBox = document.getElementById('products');
+const noProducts = document.getElementById('noProducts');
+
+function togglePregBlock(){
+  const age = +ageEl.value||0; const sex=sexEl.value;
+  const show = (sex==='female' && age>=18);
+  pregWrap.style.display = show? 'block':'none';
+  if(!show){ pregEl.checked=false; lactEl.checked=false; }
+}
+sexEl.addEventListener('change', togglePregBlock);
+ageEl.addEventListener('input', togglePregBlock);
+togglePregBlock();
+
+function renderInfo(){
+  const vitName = vitSelect.value; const info = NUTRIENTS[vitName];
+  const chips = [
+    `<span class="chip">${info.canWith.length? 'Можно с: '+info.canWith.join(', '):''}</span>`,
+    `<span class="chip">${info.avoidWith.length? 'Избегать: '+info.avoidWith.join(', '):''}</span>`
+  ].filter(Boolean).join('');
+
+  vitInfo.innerHTML = `
+    <div class="vit-card">
+      <div>
+        <div class="pill">${vitName}</div>
+        <h3>Зачем нужен</h3>
+        <div>${info.role}</div>
+        <div class="title">Продукты с высоким содержанием</div>
+        <div class="chips">${info.foods.map(f=>`<span class=chip>${f}</span>`).join('')}</div>
+      </div>
+      <div>
+        <div class="title">Когда принимать</div>
+        <div>${info.when}</div>
+        <div class="title" style="margin-top:10px">Совместимость</div>
+        <div class="chips">${chips || '<span class="chip">Нет особых ограничений</span>'}</div>
+        <div class="title" style="margin-top:10px">Подходит под цели</div>
+        <div class="chips">${(info.goals||[]).map(g=>`<span class=chip>#${g}</span>`).join('')}</div>
+      </div>
+    </div>`;
+}
+
+function renderProducts(){
+  const vitName = vitSelect.value; const info=NUTRIENTS[vitName];
+  // Фильтр по наличию выбранного нутриента в карточке nutrients (по точному имени или по группам)
+  const candidates = PRODUCTS.filter(p=>{
+    const keys = Object.keys(p.nutrients||{});
+    if(keys.includes(vitName)) return true;
+    // Мэппинги для групп
+    if(vitName==='Витамин B-комплекс' && keys.some(k=>/^Витамин\s?B|B-комплекс/.test(k))) return true;
+    if(vitName==='Витамин D3' && keys.some(k=>/Витамин D3|Витамин D\b/.test(k))) return true;
+    if(vitName==='Лютеин/Зеаксантин' && (keys.includes('Лютеин')||keys.includes('Зеаксантин'))) return true;
+    if(vitName==='Омега‑3' && keys.some(k=>/Омега/.test(k))) return true;
+    return false;
+  });
+
+  productsBox.innerHTML = '';
+  if(!candidates.length){ noProducts.style.display='block'; return; }
+  noProducts.style.display='none';
+
+  candidates.forEach(p=>{
+    const kv = Object.entries(p.nutrients).map(([k,v])=>`<div class="kv"><b>${k}:</b> ${v}</div>`).join('');
+    const card = document.createElement('div');
+    card.className='card';
+    card.innerHTML = `
+      <img loading="lazy" src="${p.img}" alt="${p.name}">
+      <h4>${p.name}</h4>
+      <div class="meta">Ключевые нутриенты и дозировки</div>
+      ${kv}
+      <div class="links">
+        <a class="btn" href="${p.inst}" target="_blank" rel="noopener">Инструкция</a>
+        <a class="btn accent" href="${p.buy}" target="_blank" rel="noopener">Заказать</a>
+      </div>`;
+    productsBox.appendChild(card);
+  });
+}
+
+function applyGoalBoost(){
+  // Доп. фильтрация/подсветка под цель (просто перемещаем более релевантные карточки вверх)
+  const goal = goalEl.value; if(!goal) return;
+  const vitName = vitSelect.value; const info=NUTRIENTS[vitName];
+  // если выбранная цель не совпадает с vit.goals — подсказка
+  if(info.goals && !info.goals.includes(goal)){
+    const warn = document.createElement('div');
+    warn.className='badge';
+    warn.style.margin='12px 0';
+    warn.innerHTML = `⚑ Вы выбрали цель «${goal}». Для неё обычно рекомендуют другие нутриенты; текущий: ${vitName}.`;
+    vitInfo.appendChild(warn);
+  }
+}
+
+// События
+[vitSelect, goalEl].forEach(el=> el.addEventListener('change', ()=>{ renderInfo(); renderProducts(); applyGoalBoost(); }));
+renderInfo(); renderProducts(); applyGoalBoost();
+</script>
+</body>
+</html>
